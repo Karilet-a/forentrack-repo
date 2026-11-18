@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Panel')}"></head>
+<body>
+<div class="ft-app">
+    <aside th:replace="~{fragments :: sidebar('panel')}"></aside>
+    <div class="ft-main">
+        <header th:replace="~{fragments :: topbar('Panel')}"></header>
+        <main class="ft-content ft-panel-rol" th:attr="data-rol=${yo.rol}">
+            <th:block th:replace="~{fragments :: alertas}"></th:block>
+
+            <!--/* Cabecera propia de cada rol: qué hace, qué le corresponde y sus atajos */-->
+            <section class="ft-rolhero" th:switch="${yo.rol}">
+                    <th:block th:case="'ADMINISTRADOR'">
+                        <div class="ft-rolhero__icono"><i class="bi bi-gear-wide-connected"></i></div>
+                        <div class="ft-rolhero__texto">
+                            <div class="ft-rolhero__rol" th:text="${'Hola, ' + yo.nombre + ' · ' + yo.rolEtiqueta}">Hola</div>
+                            <h1>Administración de la plataforma</h1>
+                            <p>Gestionas las cuentas y sus roles. No operas casos ni evidencias: eso corresponde a los demás roles.</p>
+                            <div class="ft-rolhero__nota"><i class="bi bi-info-circle"></i>Crear usuarios y activar o desactivar cuentas es exclusivo tuyo.</div>
+                        </div>
+                        <div class="ft-rolhero__atajos">
+                            <a class="btn btn-principal" th:href="@{/usuarios/nuevo}"><i class="bi bi-person-plus"></i>Crear usuario</a>
+                            <a class="btn" th:href="@{/usuarios}"><i class="bi bi-people"></i>Ver usuarios</a>
+                        </div>
+                    </th:block>
+                    <th:block th:case="'INVESTIGADOR'">
+                        <div class="ft-rolhero__icono"><i class="bi bi-search"></i></div>
+                        <div class="ft-rolhero__texto">
+                            <div class="ft-rolhero__rol" th:text="${'Hola, ' + yo.nombre + ' · ' + yo.rolEtiqueta}">Hola</div>
+                            <h1>Investigación de casos</h1>
+                            <p>Registras casos, inicias la investigación de los que se te asignan, documentas avances y pides análisis al laboratorio.</p>
+                            <div class="ft-rolhero__nota"><i class="bi bi-info-circle"></i>Los casos nuevos quedan ABIERTOS hasta que un Fiscal te los asigne.</div>
+                        </div>
+                        <div class="ft-rolhero__atajos">
+                            <a class="btn btn-principal" th:href="@{/casos/nuevo}"><i class="bi bi-folder-plus"></i>Registrar caso</a>
+                            <a class="btn" th:href="@{/casos(mios=true)}"><i class="bi bi-folder2-open"></i>Mis casos</a>
+                            <a class="btn" th:href="@{/evidencias}"><i class="bi bi-box-seam"></i>Evidencias</a>
+                        </div>
+                    </th:block>
+                    <th:block th:case="'FISCAL'">
+                        <div class="ft-rolhero__icono"><i class="bi bi-person-check"></i></div>
+                        <div class="ft-rolhero__texto">
+                            <div class="ft-rolhero__rol" th:text="${'Hola, ' + yo.nombre + ' · ' + yo.rolEtiqueta}">Hola</div>
+                            <h1>Dirección de la investigación</h1>
+                            <p>Asignas investigadores a los casos abiertos, suspendes o reactivas la investigación y cierras los casos con concepto legal favorable.</p>
+                            <div class="ft-rolhero__nota"><i class="bi bi-info-circle"></i>La asignación de investigadores es exclusiva del Fiscal.</div>
+                        </div>
+                        <div class="ft-rolhero__atajos">
+                            <a class="btn btn-principal" th:href="@{/casos(estado='ABIERTO')}"><i class="bi bi-person-plus"></i>Casos por asignar</a>
+                            <a class="btn" th:href="@{/casos(estado='EN_INVESTIGACION')}"><i class="bi bi-search"></i>En investigación</a>
+                            <a class="btn" th:href="@{/casos(estado='SUSPENDIDO')}"><i class="bi bi-pause-circle"></i>Suspendidos</a>
+                        </div>
+                    </th:block>
+                    <th:block th:case="'REVISOR_LEGAL'">
+                        <div class="ft-rolhero__icono"><i class="bi bi-bank"></i></div>
+                        <div class="ft-rolhero__texto">
+                            <div class="ft-rolhero__rol" th:text="${'Hola, ' + yo.nombre + ' · ' + yo.rolEtiqueta}">Hola</div>
+                            <h1>Control legal</h1>
+                            <p>Emites el concepto legal de los casos, validas la cadena de custodia y autorizas el descarte de evidencias.</p>
+                            <div class="ft-rolhero__nota"><i class="bi bi-info-circle"></i>Sin tu concepto favorable el Fiscal no puede cerrar un caso.</div>
+                        </div>
+                        <div class="ft-rolhero__atajos">
+                            <a class="btn btn-principal" th:href="@{/casos(estado='EN_INVESTIGACION')}"><i class="bi bi-bank"></i>Casos por conceptuar</a>
+                            <a class="btn" th:href="@{/evidencias(estado='ANALIZADA')}"><i class="bi bi-patch-check"></i>Evidencias analizadas</a>
+                            <a class="btn" th:href="@{/custodia}"><i class="bi bi-link-45deg"></i>Cadena de custodia</a>
+                        </div>
+                    </th:block>
+                    <th:block th:case="'TECNICO_CAMPO'">
+                        <div class="ft-rolhero__icono"><i class="bi bi-clipboard-check"></i></div>
+                        <div class="ft-rolhero__texto">
+                            <div class="ft-rolhero__rol" th:text="${'Hola, ' + yo.nombre + ' · ' + yo.rolEtiqueta}">Hola</div>
+                            <h1>Recolección en campo</h1>
+                            <p>Registras la evidencia que recolectas, completas el acta de recolección y la entregas a custodia.</p>
+                            <div class="ft-rolhero__nota"><i class="bi bi-info-circle"></i>Solo puedes entregar evidencias con el acta completa.</div>
+                        </div>
+                        <div class="ft-rolhero__atajos">
+                            <a class="btn btn-principal" th:href="@{/evidencias/nuevo}"><i class="bi bi-plus-square"></i>Registrar evidencia</a>
+                            <a class="btn" th:href="@{/evidencias(estado='REGISTRADA')}"><i class="bi bi-hourglass-split"></i>Por entregar</a>
+                        </div>
+                    </th:block>
+                    <th:block th:case="'CUSTODIO'">
+                        <div class="ft-rolhero__icono"><i class="bi bi-safe"></i></div>
+                        <div class="ft-rolhero__texto">
+                            <div class="ft-rolhero__rol" th:text="${'Hola, ' + yo.nombre + ' · ' + yo.rolEtiqueta}">Hola</div>
+                            <h1>Bodega y custodia</h1>
+                            <p>Recibes en bodega las evidencias entregadas, las trasladas y las devuelves; cada movimiento queda en la cadena de custodia.</p>
+                            <div class="ft-rolhero__nota"><i class="bi bi-info-circle"></i>Para devolver una evidencia, el revisor legal debe haber validado la cadena.</div>
+                        </div>
+                        <div class="ft-rolhero__atajos">
+                            <a class="btn btn-principal" th:href="@{/custodia}"><i class="bi bi-box-arrow-in-down"></i>Entregas por recibir</a>
+                            <a class="btn" th:href="@{/evidencias(estado='EN_CUSTODIA')}"><i class="bi bi-safe"></i>En custodia</a>
+                            <a class="btn" th:href="@{/evidencias(estado='ANALIZADA')}"><i class="bi bi-box-arrow-up"></i>Por devolver</a>
+                        </div>
+                    </th:block>
+                    <th:block th:case="'PERITO'">
+                        <div class="ft-rolhero__icono"><i class="bi bi-eyedropper"></i></div>
+                        <div class="ft-rolhero__texto">
+                            <div class="ft-rolhero__rol" th:text="${'Hola, ' + yo.nombre + ' · ' + yo.rolEtiqueta}">Hola</div>
+                            <h1>Peritaje</h1>
+                            <p>Realizas el análisis físico o documental de las evidencias que el jefe de laboratorio te asigna y emites el dictamen pericial.</p>
+                            <div class="ft-rolhero__nota"><i class="bi bi-info-circle"></i>Solo ves y trabajas las solicitudes asignadas a ti.</div>
+                        </div>
+                        <div class="ft-rolhero__atajos">
+                            <a class="btn btn-principal" th:href="@{/laboratorio}"><i class="bi bi-eyedropper"></i>Mis análisis</a>
+                        </div>
+                    </th:block>
+                    <th:block th:case="'ANALISTA_DIGITAL'">
+                        <div class="ft-rolhero__icono"><i class="bi bi-cpu"></i></div>
+                        <div class="ft-rolhero__texto">
+                            <div class="ft-rolhero__rol" th:text="${'Hola, ' + yo.nombre + ' · ' + yo.rolEtiqueta}">Hola</div>
+                            <h1>Análisis digital</h1>
+                            <p>Analizas la evidencia digital que se te asigna: registras el hash SHA-256 y emites el informe técnico.</p>
+                            <div class="ft-rolhero__nota"><i class="bi bi-info-circle"></i>El informe requiere haber registrado primero el hash.</div>
+                        </div>
+                        <div class="ft-rolhero__atajos">
+                            <a class="btn btn-principal" th:href="@{/laboratorio}"><i class="bi bi-cpu"></i>Mis análisis</a>
+                        </div>
+                    </th:block>
+                    <th:block th:case="'JEFE_LABORATORIO'">
+                        <div class="ft-rolhero__icono"><i class="bi bi-diagram-3"></i></div>
+                        <div class="ft-rolhero__texto">
+                            <div class="ft-rolhero__rol" th:text="${'Hola, ' + yo.nombre + ' · ' + yo.rolEtiqueta}">Hola</div>
+                            <h1>Dirección del laboratorio</h1>
+                            <p>Asignas las solicitudes de análisis a peritos y analistas digitales, y apruebas o devuelves los dictámenes.</p>
+                            <div class="ft-rolhero__nota"><i class="bi bi-info-circle"></i>Aprobar un dictamen deja la evidencia en estado ANALIZADA.</div>
+                        </div>
+                        <div class="ft-rolhero__atajos">
+                            <a class="btn btn-principal" th:href="@{/laboratorio(estado='SOLICITADA')}"><i class="bi bi-person-plus"></i>Por asignar</a>
+                            <a class="btn" th:href="@{/laboratorio(estado='DICTAMINADA')}"><i class="bi bi-file-earmark-check"></i>Por revisar</a>
+                        </div>
+                    </th:block>
+                    <th:block th:case="'AUDITOR'">
+                        <div class="ft-rolhero__icono"><i class="bi bi-shield-check"></i></div>
+                        <div class="ft-rolhero__texto">
+                            <div class="ft-rolhero__rol" th:text="${'Hola, ' + yo.nombre + ' · ' + yo.rolEtiqueta}">Hola</div>
+                            <h1>Auditoría del sistema</h1>
+                            <p>Consultas la bitácora de todas las acciones, exportas reportes y registras hallazgos sobre eventos sospechosos.</p>
+                            <div class="ft-rolhero__nota"><i class="bi bi-info-circle"></i>Tu acceso es de solo lectura: no modificas casos ni evidencias.</div>
+                        </div>
+                        <div class="ft-rolhero__atajos">
+                            <a class="btn btn-principal" th:href="@{/auditoria(resultado='DENEGADO',revisado='false')}"><i class="bi bi-shield-x"></i>Accesos denegados</a>
+                            <a class="btn" th:href="@{/auditoria}"><i class="bi bi-journal-text"></i>Bitácora</a>
+                        </div>
+                    </th:block>
+            </section>
+
+            <div class="alert alert-warning ft-alert" th:if="${panel.aviso() != null}">
+                <i class="bi bi-cloud-slash"></i><div th:text="${panel.aviso()}">Aviso</div></div>
+
+            <div class="row g-3 mb-4">
+                <div class="col-6 col-xl-3" th:each="i : ${panel.indicadores()}">
+                    <div class="ft-card ft-kpi" th:classappend="${'t-' + i.tono()}">
+                        <div class="ft-kpi__icono"><i class="bi" th:classappend="${i.icono()}"></i></div>
+                        <div>
+                            <div class="ft-kpi__valor" th:text="${i.valor()}">0</div>
+                            <div class="ft-kpi__label" th:text="${i.etiqueta()}">Indicador</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-lg-7">
+                    <section class="ft-card">
+                        <div class="ft-card__head">
+                            <h2><i class="bi bi-inbox"></i><span th:text="${panel.tituloBandeja()}">Pendientes</span></h2>
+                        </div>
+                        <ul class="ft-lista" th:unless="${#lists.isEmpty(panel.bandeja())}">
+                            <li th:each="b : ${panel.bandeja()}">
+                                <a class="ft-lista__item"
+                                   th:with="asignable=${b.estado() == 'ABIERTO' and puede.contains('CASO_ASIGNAR')}"
+                                   th:href="@{${asignable ? b.enlace() + '?accion=asignar' : b.enlace()}}">
+                                    <span class="ft-lista__icono"><i class="bi bi-arrow-right-short fs-5"></i></span>
+                                    <span class="flex-grow-1 min-w-0">
+                                        <span class="d-block fw-semibold text-truncate" th:text="${b.titulo()}">Título</span>
+                                        <span class="d-block small text-muted text-truncate" th:text="${b.detalle()}">Detalle</span>
+                                    </span>
+                                    <span class="btn btn-sm btn-primary ft-lista__accion" th:if="${asignable}"><i class="bi bi-person-plus"></i>Asignar</span>
+                                    <th:block th:unless="${asignable}"><span th:replace="~{fragments :: badge(${b.estado()})}"></span></th:block>
+                                </a>
+                            </li>
+                        </ul>
+                        <th:block th:if="${#lists.isEmpty(panel.bandeja())}"><div th:replace="~{fragments :: vacio('bi-check2-all', 'No tienes pendientes por ahora.')}"></div></th:block>
+                    </section>
+                </div>
+
+                <div class="col-lg-5">
+                    <section class="ft-card">
+                        <div class="ft-card__head"><h2><i class="bi bi-star"></i>Tus acciones exclusivas</h2></div>
+                        <div class="ft-card__body py-2">
+                            <div class="ft-permiso ft-permiso--exclusivo" th:each="x : ${exclusivas}">
+                                <span class="ft-permiso__icono"><i class="bi" th:classappend="${x.icono}"></i></span>
+                                <div>
+                                    <div class="fw-semibold" th:text="${x.etiqueta}">Acción</div>
+                                    <div class="small text-muted" th:text="${x.descripcion}">Descripción</div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    <section class="ft-card">
+                        <div class="ft-card__head"><h2><i class="bi bi-eye"></i>También puedes consultar</h2></div>
+                        <div class="ft-card__body d-flex flex-wrap gap-2">
+                            <span class="ft-tag" th:each="x : ${compartidas}">
+                                <i class="bi" th:classappend="${x.icono}"></i><span th:text="${x.etiqueta}">Consulta</span>
+                            </span>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+<th:block th:replace="~{fragments :: scripts}"></th:block>
+</body>
+</html>

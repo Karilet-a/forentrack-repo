@@ -1,0 +1,12 @@
+# Solo MongoDB para desarrollo local (puerto 27017). Uso:
+#   docker compose -f docker-compose.mongo.yml up -d
+# Cada servicio crea su propia base automáticamente (auditoria_db, usuarios_db, ...).
+services:
+  mongo:
+    image: mongo:7
+    container_name: forentrack-mongo
+    restart: unless-stopped
+    ports: ["27017:27017"]
+    volumes: [mongo-datos:/data/db]
+volumes:
+  mongo-datos:
